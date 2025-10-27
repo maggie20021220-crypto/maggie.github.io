@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>根式運算互動演示</title>
+    <style>
+        /* 基礎樣式設定 */
+        body {
+            font-family: '微軟正黑體', Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start; /* 讓內容靠上 */
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f4f4f9;
+            padding-top: 50px; /* 頂部留白 */
+        }
+
+        /* 主容器樣式 */
+        #quiz-container {
+            width: 90%;
+            max-width: 800px;
+            background-color: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            text-align: center;
+        }
+
+        /* 題目樣式 */
+        h1 {
+            color: #333;
+            margin-bottom: 40px;
+            font-size: 2em;
+        }
+
+        /* 選項按鈕容器 */
+        #options-container {
+            display: flex;
+            justify-content: space-around;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        /* 選項按鈕樣式 */
+        .option-btn {
+            padding: 15px 30px;
+            font-size: 1.5em;
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            flex: 1; /* 平均分配寬度 */
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .option-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* 不同的按鈕配色 */
+        #optionA { background-color: #4CAF50; color: white; } /* 綠色 */
+        #optionB { background-color: #007bff; color: white; } /* 藍色 */
+        
+        .option-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        /* 回饋結果區 */
+        #feedback-area {
+            margin-top: 30px;
+            min-height: 350px; /* 預留空間，避免內容跳動 */
+        }
+
+        /* 照片樣式 */
+        #feedbackImage {
+            max-width: 100%;
+            height: 300px; /* 固定高度，保持視覺一致 */
+            object-fit: contain; /* 確保圖片不被裁切 */
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none; /* 初始隱藏 */
+            border: 5px solid #ccc;
+            transition: border-color 0.5s ease;
+        }
+
+        /* 回饋文字樣式 */
+        #feedbackText {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #555;
+            display: none; /* 初始隱藏 */
+            margin-top: 15px;
+        }
+
+        /* 重設按鈕 */
+        #reset-btn {
+            margin-top: 30px;
+            padding: 10px 20px;
+            font-size: 1em;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: none; /* 初始隱藏 */
+            transition: background-color 0.3s ease;
+        }
+
+        #reset-btn:hover {
+            background-color: #d32f2f;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="quiz-container">
+        <h1>國二數學：根式的運算</h1>
+        <h2>請問： √18 - √8 的計算結果是什麼？</h2>
+
+        <div id="options-container">
+            <button class="option-btn" id="optionA" data-choice="A">選項 A： √10</button>
+            <button class="option-btn" id="optionB" data-choice="B">選項 B： √2</button>
+        </div>
+
+        <div id="feedback-area">
+            <img id="feedbackImage" src="" alt="回饋照片">
+            <p id="feedbackText"></p>
+            <button id="reset-btn">重設題目</button>
+        </div>
+    </div>
+
+    <script>
+        // 核心設定：定義正確答案與照片路徑
+        const CORRECT_ANSWER = 'B'; // 正確答案是 √2，對應選項 B
+        const CORRECT_IMAGE_PATH = 'correct.jpg'; // 答對的照片路徑 (請替換為您的照片)
+        const WRONG_IMAGE_PATH = 'wrong.jpg';   // 答錯的照片路徑 (請替換為您的照片)
+
+        // 取得 DOM 元素
+        const optionA = document.getElementById('optionA');
+        const optionB = document.getElementById('optionB');
+        const feedbackImage = document.getElementById('feedbackImage');
+        const feedbackText = document.getElementById('feedbackText');
+        const resetButton = document.getElementById('reset-btn');
+        const optionsContainer = document.getElementById('options-container');
+
+        // 處理選項點擊事件
+        function handleAnswer(event) {
+            const selectedChoice = event.target.getAttribute('data-choice');
+            
+            // 1. 鎖定按鈕
+            optionA.disabled = true;
+            optionB.disabled = true;
+            
+            // 2. 判斷正誤並設定回饋內容
+            if (selectedChoice === CORRECT_ANSWER) {
+                // 答對邏輯
+                feedbackImage.src = CORRECT_IMAGE_PATH;
+                feedbackImage.style.borderColor = '#4CAF50'; // 綠色邊框
+                feedbackText.textContent = "太棒了！完全正確！根號相減前記得要先化簡成同類方根喔：3\√2 - 2\√2 = \√2";
+                feedbackText.style.color = '#4CAF50';
+            } else {
+                // 答錯邏輯
+                feedbackImage.src = WRONG_IMAGE_PATH;
+                feedbackImage.style.borderColor = '#f44336'; // 紅色邊框
+                feedbackText.textContent = "噢，可能掉入陷阱了！根號內的數字不能直接相減！請記得：\√a - \√b = \√a-b";
+                feedbackText.style.color = '#f44336';
+            }
+
+            // 3. 顯示結果
+            feedbackImage.style.display = 'block'; 
+            feedbackText.style.display = 'block';
+            resetButton.style.display = 'block'; // 顯示重設按鈕
+        }
+
+        // 處理重設事件
+        function resetQuiz() {
+            // 重置狀態
+            optionA.disabled = false;
+            optionB.disabled = false;
+            
+            feedbackImage.style.display = 'none';
+            feedbackText.style.display = 'none';
+            resetButton.style.display = 'none';
+            
+            feedbackImage.style.borderColor = '#ccc'; // 重設邊框顏色
+        }
+
+        // 綁定事件監聽器
+        optionA.addEventListener('click', handleAnswer);
+        optionB.addEventListener('click', handleAnswer);
+        resetButton.addEventListener('click', resetQuiz);
+
+        // 初始載入時隱藏圖片和文字
+        document.addEventListener('DOMContentLoaded', resetQuiz);
+    </script>
+
+</body>
+</html>
